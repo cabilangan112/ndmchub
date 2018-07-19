@@ -130,4 +130,14 @@ STATIC_URL = '/static/'
 PREPARE_UPLOAD_BACKEND = 'filetransfers.backends.default.prepare_upload'
 SERVE_FILE_BACKEND = 'filetransfers.backends.default.serve_file'
 PUBLIC_DOWNLOAD_URL_BACKEND = 'filetransfers.backends.default.public_download_url'
-SERVE_FILE_BACKEND = 'filetransfers.backends.xsendfile.serve_file'
+
+
+# Configure "delegate" backend
+PREPARE_UPLOAD_BACKEND = 'filetransfers.backends.delegate.prepare_upload'
+PRIVATE_PREPARE_UPLOAD_BACKEND = 'djangoappengine.storage.prepare_upload'
+PUBLIC_PREPARE_UPLOAD_BACKEND = 's3backend.prepare_upload'
+
+# Use S3 for public_download_url and Blobstore for serve_file
+SERVE_FILE_BACKEND = 'djangoappengine.storage.serve_file'
+PUBLIC_DOWNLOAD_URL_BACKEND = 'filetransfers.backends.base_url.public_download_url'
+PUBLIC_DOWNLOADS_URL_BASE = 'http://s3.amazonaws.com/my-public-bucket/'
