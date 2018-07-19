@@ -75,6 +75,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
+#file upload
+PREPARE_UPLOAD_BACKEND = 'filetransfers.backends.default.prepare_upload'
+SERVE_FILE_BACKEND = 'filetransfers.backends.default.serve_file'
+PUBLIC_DOWNLOAD_URL_BACKEND = 'filetransfers.backends.default.public_download_url'
+
+# Configure "delegate" backend
+PREPARE_UPLOAD_BACKEND = 'filetransfers.backends.delegate.prepare_upload'
+PRIVATE_PREPARE_UPLOAD_BACKEND = 'djangoappengine.storage.prepare_upload'
+PUBLIC_PREPARE_UPLOAD_BACKEND = 's3backend.prepare_upload'
+
+# Use S3 for public_download_url and Blobstore for serve_file
+SERVE_FILE_BACKEND = 'djangoappengine.storage.serve_file'
+PUBLIC_DOWNLOAD_URL_BACKEND = 'filetransfers.backends.base_url.public_download_url'
+PUBLIC_DOWNLOADS_URL_BASE = 'http://s3.amazonaws.com/my-public-bucket/'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
@@ -126,18 +140,3 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_URL = '/static/'
 
-#file upload
-PREPARE_UPLOAD_BACKEND = 'filetransfers.backends.default.prepare_upload'
-SERVE_FILE_BACKEND = 'filetransfers.backends.default.serve_file'
-PUBLIC_DOWNLOAD_URL_BACKEND = 'filetransfers.backends.default.public_download_url'
-
-
-# Configure "delegate" backend
-PREPARE_UPLOAD_BACKEND = 'filetransfers.backends.delegate.prepare_upload'
-PRIVATE_PREPARE_UPLOAD_BACKEND = 'djangoappengine.storage.prepare_upload'
-PUBLIC_PREPARE_UPLOAD_BACKEND = 's3backend.prepare_upload'
-
-# Use S3 for public_download_url and Blobstore for serve_file
-SERVE_FILE_BACKEND = 'djangoappengine.storage.serve_file'
-PUBLIC_DOWNLOAD_URL_BACKEND = 'filetransfers.backends.base_url.public_download_url'
-PUBLIC_DOWNLOADS_URL_BASE = 'http://s3.amazonaws.com/my-public-bucket/'

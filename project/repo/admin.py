@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from . models import repo, UploadModel
+from . models import repo 
 
 admin.site.register(repo)
-admin.site.register(UploadModel)
+
 # Register your models here.
