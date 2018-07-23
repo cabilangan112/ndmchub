@@ -1,9 +1,11 @@
 from django.db import models
+from repo.models import repo
 
  
 class UploadModel(models.Model):
-    File_name = models.CharField(max_length=150)
-    file = models.FileField(upload_to='uploads/%Y/%m/%d/%H/%M/%S/')
+    repository_name = models.ForeignKey(repo,on_delete=models.CASCADE)
+    File_name       = models.CharField(max_length=150)
+    file            = models.FileField(upload_to='uploads/%Y/%m/%d/%H/%M/%S/')
     description     = models.TextField(null=True, blank=True)
     date            = models.DateTimeField(auto_now_add=True)
     date_modified   = models.DateTimeField(auto_now_add=True)

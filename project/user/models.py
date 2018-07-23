@@ -1,11 +1,13 @@
 from django.db import models
-
+from django.conf import settings
+user = settings.AUTH_USER_MODEL
 
 GENDER = (
     ('Male', 'Male'),
     ('Female', 'Female'),
 )
 class User(models.Model):
+    account         =   models.ForeignKey(user,on_delete=models.CASCADE)
     profile_picture =   models.ImageField(upload_to = 'static/media')
     last_name       =   models.CharField(max_length=100)
     first_name      =   models.CharField(max_length=100)
@@ -26,6 +28,7 @@ class User(models.Model):
         return '{}'.format(self.last_name, self.first_name)
 
 class org(models.Model):
+    member          = models.ManyToManyField(User)
     org_name        = models.CharField(max_length=200)
     description     = models.TextField(null=True, blank=True)
     date_created    = models.DateTimeField(auto_now_add=True)
