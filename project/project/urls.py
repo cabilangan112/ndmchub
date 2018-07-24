@@ -16,10 +16,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.contrib.auth import views as auth_views
+from rest_framework import routers
+from django.conf import settings
+from user.views import AccountViewSet
+from django.conf.urls.static import static
+
+router = routers.DefaultRouter()
+router.register(r'register', AccountViewSet, base_name='account')
 
 urlpatterns = [
+    path('api', include(router.urls)),
     path('admin/', admin.site.urls),
     path('login/', auth_views.login, name='login'),
 #   	path('logout/$', auth_views.logout, name='logout'),
     path('oauth/', include('social_django.urls', namespace='social')),
 ]
+urlpatterns.extend(
+    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) +
+    static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+)

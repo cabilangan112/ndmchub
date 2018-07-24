@@ -156,3 +156,4 @@ STATIC_URL = '/static/'
 
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
+AUTH_USER_MODEL = 'user.Account'

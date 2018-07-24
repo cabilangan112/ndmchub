@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import User, org
+from .models import org,Account
 
 
-admin.site.register(User)
+#admin.site.register(Account)
 admin.site.register(org)
+admin.site.register(Account)
