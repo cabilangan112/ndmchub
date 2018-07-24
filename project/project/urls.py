@@ -18,7 +18,8 @@ from django.urls import path,include
 from django.contrib.auth import views as auth_views
 from rest_framework import routers
 from django.conf import settings
-from user.views import AccountViewSet
+from django.conf.urls import url
+from user.views import AccountViewSet,LoginView
 from django.conf.urls.static import static
 
 router = routers.DefaultRouter()
@@ -27,8 +28,9 @@ router.register(r'register', AccountViewSet, base_name='account')
 urlpatterns = [
     path('api', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('login/', auth_views.login, name='login'),
-#   	path('logout/$', auth_views.logout, name='logout'),
+ #  path('login/', auth_views.login, name='login'),
+  	url(r'^api/v1/auth/login/$', LoginView.as_view(), name='login'),
+
     path('oauth/', include('social_django.urls', namespace='social')),
 ]
 urlpatterns.extend(

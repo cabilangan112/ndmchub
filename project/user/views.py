@@ -5,11 +5,15 @@ from user.serializers import AccountSerializer
 from django.shortcuts import render_to_response, redirect, render
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+import json
+from django.contrib.auth import authenticate, login
+from rest_framework import status, views
+from rest_framework.response import Response
 
 user = get_user_model()
 
 class AccountViewSet(viewsets.ModelViewSet):
-    lookup_field = 'username'
+    lookup_field = 'email'
     queryset = user.objects.all()
     serializer_class = AccountSerializer
 
@@ -46,3 +50,30 @@ def home(request):
 def logout(request):
     auth_logout(request)
     return redirect('/')
+
+
+
+
+class LoginView(views.APIView):
+    def post(self, request, format=None):
+        data = json.loads(request.body)
+        email = data.get('email', None)
+        password = data.get('password', None)
+        account = authenticate(email=email, password=password)
+
+        if account is not None:
+            if account.is_active:
+                login(request, account)
+                serialized = AccountSerializer(account)
+
+                return Response(serialized.data)
+            else:
+                return Response({
+                    'status': 'Unauthorized',
+                    'message': 'This account has been disabled.'
+                }, status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            return Response({
+                'status': 'Unauthorized',
+                'message': 'Username/password combination invalid.'
+            }, status=status.HTTP_401_UNAUTHORIZED)
