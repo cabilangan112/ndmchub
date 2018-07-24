@@ -12,7 +12,7 @@ GENDER = (
     ('Female', 'Female'),
 )
 class org(models.Model):
-    member          = models.ManyToManyField('Account')
+ 
     org_name        = models.CharField(max_length=200)
     description     = models.TextField(null=True, blank=True)
     date_created    = models.DateTimeField(auto_now_add=True)
@@ -25,6 +25,21 @@ class org(models.Model):
     
     def __str__(self):
         return '{}'.format(self.org_name)
+
+
+class info(models.Model):
+    account         =   models.ForeignKey('Account',on_delete=models.CASCADE)
+    profile_picture =   models.ImageField(upload_to = 'static/media')
+    first_name      =   models.CharField(max_length=40, blank=True)
+    last_name       =   models.CharField(max_length=40, blank=True)      
+    tagline         =   models.CharField(max_length=140, blank=True)
+    sex             =   models.CharField(max_length=6, choices=GENDER, blank=True, default=True)
+    age             =   models.CharField(max_length=20)
+    Location        =   models.CharField(max_length=100)      
+    Bio             =   models.TextField(blank=True, default=True)
+    student         =   models.BooleanField(default=False)
+    teacher         =   models.BooleanField(default=False)
+    office          =   models.BooleanField(default=False)
 
 class AccountManager(BaseUserManager):
     def create_user(self, email,date_of_birth, password=None, **kwargs):
@@ -51,24 +66,11 @@ class AccountManager(BaseUserManager):
 class Account(AbstractBaseUser):
     email           =   models.EmailField(unique=True)
     username        =   models.CharField(max_length=40, unique=True)
-    profile_picture =   models.ImageField(upload_to = 'static/media')
-    first_name      =   models.CharField(max_length=40, blank=True)
-    last_name       =   models.CharField(max_length=40, blank=True)
-    tagline         =   models.CharField(max_length=140, blank=True)
     sex             =   models.CharField(max_length=6, choices=GENDER, blank=True, default=True)
     date_of_birth   =   models.DateField()
-    age             =   models.CharField(max_length=20)
-    Location        =   models.CharField(max_length=100)
-    Bio             =   models.TextField(blank=True, default=True)
-    student         =   models.BooleanField(default=False)
-    teacher         =   models.BooleanField(default=False)
-    office          =   models.BooleanField(default=False)
-
-
-    is_admin = models.BooleanField(default=False)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    is_admin        =   models.BooleanField(default=False)
+    created_at      =   models.DateTimeField(auto_now_add=True)
+    updated_at      =   models.DateTimeField(auto_now=True)
 
     objects = AccountManager()
 
