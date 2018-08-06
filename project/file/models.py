@@ -7,7 +7,7 @@ from django.core.files.storage import FileSystemStorage
 class UploadModel(models.Model):
     repository_name = models.ForeignKey(repo,on_delete=models.CASCADE)
     File_name       = models.CharField(max_length=150)
-    file            = models.FileField(blank=False, null=False)
+    file            = models.FileField(null=False)
     description     = models.TextField(null=True, blank=True)
     date            = models.DateTimeField(auto_now_add=True)
     date_modified   = models.DateTimeField(auto_now_add=True)
