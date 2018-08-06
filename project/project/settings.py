@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-
+from os import path
+from dj_database_url import parse as parse_db_url
+from decouple import config
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -50,6 +52,9 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -80,6 +85,7 @@ AUTHENTICATION_BACKENDS = (
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',     
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -172,10 +178,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-STATIC_URL = '/static/'
+STATIC_URL = config('STATIC_URL', default='/s/')
+STATIC_ROOT = path.join(BASE_DIR, 'statics')
 
-LOGIN_URL = 'login'
-LOGOUT_URL = 'logout'
-#AUTH_USER_MODEL = 'user.Account'
+MEDIA_URL = config('MEDIA_URL', default='/media/')
+MEDIA_ROOT = path.join(BASE_DIR, 'media')
+
+#cors sittings
+CORS_ORIGIN_ALLOW_ALL = True
