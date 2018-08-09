@@ -24,7 +24,7 @@ from file.views import FileUpload
 from django.conf.urls.static import static
 
 router = routers.DefaultRouter()
- 
+#router.register(r'file', FileUpload, base_name='file')
 
 urlpatterns = [
     path('api', include(router.urls)),
@@ -32,6 +32,7 @@ urlpatterns = [
     path('oauth/', include('social_django.urls', namespace='social')),
     path('file/', include('file.urls', namespace='file')),
     path('profile/', include('user.urls', namespace='user')),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 urlpatterns.extend(
     static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) +

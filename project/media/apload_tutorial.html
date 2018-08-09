@@ -1,0 +1,553 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0076)http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/ -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <title>Django: Upload Files Above the Public Root and Serving them with Apache</title>
+        
+        <meta name="description" content="How to set Django to upload files in a directory above the public web folder and serve the files through apache.">
+        <meta name="keywords" content="django upload private above public root">
+        
+        <link rel="stylesheet" type="text/css" href="./apload tutorial_files/template.css">
+        <link rel="stylesheet" type="text/css" href="./apload tutorial_files/backgrounds.css">
+        <link rel="shortcut icon" href="http://static.nemesisdesign.net/template/images/favicon.png">
+        <!--[if gte IE 7]><link href="http://static.nemesisdesign.net/template/css/ie.css" rel="stylesheet" type="text/css" /><![endif]-->
+        
+        <link rel="alternate" type="application/rss+xml" title="NemesisDesign&#39;s Blog RSS Feed" href="http://feeds.feedburner.com/nemesisdesign?format=xml">
+	<script type="text/javascript" async="" src="./apload tutorial_files/ga.js"></script><script async="" src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+  	  (adsbygoogle = window.adsbygoogle || []).push({
+    	    google_ad_client: "ca-pub-1574456675726200",
+    	    enable_page_level_ads: true
+  	  });
+	</script>
+    <link rel="stylesheet" type="text/css" href="./apload tutorial_files/pre-syntax-colors.css"></head>
+    <body>
+        <div id="container">
+            <div id="head">
+                <a href="http://nemesisdesign.net/" title="Nemesis Design&#39;s home" class="tooltip" id="logo">Nemesis Design<span>&nbsp;</span></a>
+                
+                <ul id="skip" class="robots-nocontent">
+                    <li><a href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#content-anchor" rel="nofollow">Skip to content</a></li>
+                    <li><a href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#navigation-anchor" rel="nofollow">Skip to navigation</a></li>
+                    <li><a href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#search-anchor" rel="nofollow">Skip to search</a></li>
+					<li><a href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#comments-anchor" rel="nofollow">Skip to comments</a></li>
+                </ul>
+                
+                <p id="hello">
+                    Hello, my name is <em>Federico Capoano</em>,<br>
+                    I <i>enjoy</i> developing <strong>cutting-edge</strong> websites<br>
+                    and working with <b>creative</b> people.<span>&nbsp;</span>
+                </p>
+            </div>
+            
+            <a name="navigation-anchor" class="accessibility">&nbsp;</a>
+            <ul id="navigation">
+                <li>come back <a href="http://nemesisdesign.net/" title="Homepage of Nemesisdesign.net" class="tooltip">home</a></li>
+                <li>more <a href="http://nemesisdesign.net/about/" title="My story, my skills, my personality" class="tooltip">about</a> me</li>
+                <li class="current">read my <a href="http://nemesisdesign.net/blog/" title="A place where I share my ideas, thougths and code snippets" class="tooltip">blog</a></li>
+                <li>see my <a href="http://nemesisdesign.net/portfolio/" title="A selection of the best works I&#39;ve done" class="tooltip">portfolio</a></li>
+                <li class="last"><a href="http://nemesisdesign.net/contact/" title="Contact me for more information and free quotes" class="tooltip">contact</a> me</li>
+            </ul>
+            
+            <div id="body">
+                <a name="content-anchor" class="accessibility">&nbsp;</a>
+                
+            
+                <div id="blog">
+                
+
+
+    <h1><span>Django: Private File Upload and Serving</span></h1>
+    <p class="aftertitle">
+		<a class="img"><img src="./apload tutorial_files/django-upload-serve-files-above-web-root.jpg" alt=""></a>
+    	
+        <a class="comments tooltip" href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#comments-anchor" title="Read the comments of &quot;&quot;">
+            <span>7</span>comments
+        </a>
+        	
+    </p>
+   
+    <script async="" src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Banner blog nemesisdesign.net -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1574456675726200" data-ad-slot="9634225098" data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+    <p class="info">
+        <span>30th September 2010</span>
+        <span>in <a href="http://nemesisdesign.net/blog/coding" title="Check other blog posts of category &quot;Coding&quot;" class="tooltip">Coding</a></span>
+        
+        <span>Tags:
+		    
+		    <a href="http://nemesisdesign.net/blog/tags/django" title="View other posts tagged with &quot;django&quot;" class="tooltip">django</a>, 
+		    
+		    <a href="http://nemesisdesign.net/blog/tags/programming" title="View other posts tagged with &quot;programming&quot;" class="tooltip">programming</a>, 
+		    
+		    <a href="http://nemesisdesign.net/blog/tags/python" title="View other posts tagged with &quot;python&quot;" class="tooltip">python</a>, 
+		    
+		    <a href="http://nemesisdesign.net/blog/tags/security" title="View other posts tagged with &quot;security&quot;" class="tooltip">security</a>, 
+		    
+		    <a href="http://nemesisdesign.net/blog/tags/upload" title="View other posts tagged with &quot;upload&quot;" class="tooltip">upload</a>
+		    
+        </span>
+    
+    </p>
+
+    <div class="content blog">
+        <div class="inner">
+        <p>
+	In this post I want to share with you a quick tip that I couldn't learn just by browsing and reading the Django documentation (yea sometimes the solution is easier to find than what we think).</p>
+<p>
+	The standard Django FileFields assume you want to upload a file in a subdirectory of MEDIA_ROOT, what if you want to <strong>upload the file in a private directory above the web root</strong>, not accessible via http?<br>
+<strong>How can you serve the files</strong> then?</p>
+<h2>
+	1. Enter Filesystem Storage Class</h2>
+<p>
+	As explained in the <a href="http://docs.djangoproject.com/en/1.2/topics/files/#the-built-in-filesystem-storage-class" target="_blank">Django Documentation</a>, consider the following model:</p>
+<div class="syntax"><pre><span class="c1"># models.py</span>
+
+<span class="n">from</span> <span class="n">django</span><span class="o">.</span><span class="n">db</span> <span class="nb">import</span> <span class="n">models</span>
+
+<span class="n">class</span> <span class="n">Myapp</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="s">""" Your application """</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FileField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="s">'files'</span><span class="p">)</span>
+</pre></div>
+
+<p>
+	And let's state for example that the apache web root is "/var/www/yoursite/public_html/" and we want the files to be uploaded in&nbsp;"/var/www/yoursite/private/".</p>
+<div class="syntax"><pre><span class="c"># models.py</span>
+
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.core.files.storage</span> <span class="kn">import</span> <span class="n">FileSystemStorage</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="n">FileSystemStorage</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s">"/var/www/yoursite/private/"</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Myapp</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">""" Your application """</span>
+    <span class="nb">file</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FileField</span><span class="p">(</span><span class="n">storage</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+</pre></div>
+
+<p>
+	You can even specify the "upload_to" parameter and django will upload the file in the subdirectory of &nbsp;"/var/www/yoursite/private/".</p>
+<p>
+	To make things nicer you can define the location in your settings file and then import the value in your models.py file:</p>
+<div class="syntax"><pre><span class="c"># settings.py</span>
+<span class="n">PRIVATE_DIR</span> <span class="o">=</span> <span class="s">'/var/www/yoursite/private/'</span>
+
+<span class="c"># models.py</span>
+
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.core.files.storage</span> <span class="kn">import</span> <span class="n">FileSystemStorage</span>
+	 
+<span class="kn">from</span> <span class="nn">settings</span> <span class="kn">import</span> <span class="n">PRIVATE_DIR</span>
+<span class="n">fs</span> <span class="o">=</span> <span class="n">FileSystemStorage</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">PRIVATE_DIR</span><span class="p">)</span>
+	 
+<span class="k">class</span> <span class="nc">Myapp</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">""" Your application """</span>
+    <span class="nb">file</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="s">'images'</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+</pre></div>
+
+<p>
+	This last examples tells django to upload images in "/var/www/yoursite/private/images/".</p>
+<h2>
+	Serving files: enter django-filetransfers</h2>
+<p>
+	To save time I used the interesting app <a href="http://www.allbuttonspressed.com/projects/django-filetransfers" target="_blank">django-filetransfers</a>.</p>
+<ol>
+<li>
+		Simply download it, unzip it (or use "tar xvf" if you download it as a gzip archive), cd into the folder and install the script by using "python setup.py install".</li>
+<li>
+		Add "filetransfers" in your INSTALLED_APP tuple in settings.py.</li>
+<li>
+		Create a view that will serve the file:</li>
+</ol>
+<br>
+<div class="syntax"><pre><span class="c"># view.py</span>
+
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">get_object_or_404</span>
+<span class="kn">from</span> <span class="nn">filetransfers.api</span> <span class="kn">import</span> <span class="n">serve_file</span>
+<span class="kn">from</span> <span class="nn">myapp.models</span> <span class="kn">import</span> <span class="n">Myapp</span>
+
+<span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+
+    <span class="c"># get the object by id or raise a 404 error</span>
+    <span class="nb">object</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Myapp</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">serve_file</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">object</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+</pre></div>
+
+<p>
+	It was much easier than what I thought in the beginning.</p>
+<h2>
+	What I've really learned today</h2>
+<p>
+	Sometimes using google to find quick answers is not the right way. It is better to look at the documentation with more attention.</p>
+<p>
+	With this article bytheway, I hope I will help other people to solve this problem quickly.</p>
+<p>
+	Thanks to <strong>Blaaman</strong> and <strong>Xavier Ordoquy</strong> in the Django Users Google Group. See <a href="http://groups.google.com/group/django-users/browse_thread/thread/6876b45961c6ade6/054fb073921ebd31?lnk=raot&amp;pli=1">question on Google Groups</a>.</p>
+
+        </div>
+    </div>
+
+    <p><a class="retweet self" target="_blank" href="http://twitter.com/home?status=Django%3A%20Upload%20Files%20Above%20the%20Public%20Root%20and%20Serving%20them%20with%20Apache%20http%3A%2F%2Fbit.ly%2FdASwPy" title=""><strong>23 </strong><span>♻&nbsp;Retweet</span></a></p>
+
+    <div id="commentcontainer">
+	
+	<h3 class="functional"><span><a name="comments-anchor">Comments</a></span></h3>
+	<div class="content disableoverflow">
+	    <div class="inner">
+		<ol id="comments">
+		
+		
+		<li id="c_id295">				
+		    <a name="c295" href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#c295" title="Permalink to Esam&#39;s comment" class="count tooltip">1.</a>
+		    <p class="name">
+			<span>Esam</span> said:
+		    </p>
+		    <p class="date"><span>(</span> on  9th of May 2011 at 16:02 <span>)</span></p>
+		    <p class="comment"><span class="begin">“</span>if i want this app to upload pic directly from the internet eg: example.com/main.jpg .. what shoud i do in order to obtain this result ?<span class="end">”</span></p>
+
+		</li>
+		
+		
+		
+		<li id="c_id296">				
+		    <a name="c296" href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#c296" title="Permalink to Federico Capoano&#39;s comment" class="count tooltip">2.</a>
+		    <p class="name">
+			<span>Federico Capoano</span> said:
+		    </p>
+		    <p class="date"><span>(</span> on  9th of May 2011 at 16:06 <span>)</span></p>
+		    <p class="comment"><span class="begin">“</span>This script doesn't serve this scope.<span class="end">”</span></p>
+
+		</li>
+		
+		
+		
+		<li id="c_id332">				
+		    <a name="c332" href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#c332" title="Permalink to maldives&#39;s comment" class="count tooltip">3.</a>
+		    <p class="name">
+			<span>maldives</span> said:
+		    </p>
+		    <p class="date"><span>(</span> on  13th of September 2011 at 19:09 <span>)</span></p>
+		    <p class="comment"><span class="begin">“</span>very good... i agree with google thing i have been searching google for a week for this function... but its really simple... i was looking more for security<br><br>thank man<br>have a good day<span class="end">”</span></p>
+
+		</li>
+		
+		
+		
+		<li id="c_id369">				
+		    <a name="c369" href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#c369" title="Permalink to Jon&#39;s comment" class="count tooltip">4.</a>
+		    <p class="name">
+			<a rel="nofollow" href="http://www.manfredmacx.com/" title="View Jon&#39;s website" class="tooltip"><span>Jon</span></a> said:
+		    </p>
+		    <p class="date"><span>(</span> on  25th of October 2011 at 04:00 <span>)</span></p>
+		    <p class="comment"><span class="begin">“</span>Thanks, this is a nice, simple explanation of serving private files.  Very helpful.<span class="end">”</span></p>
+
+		</li>
+		
+		
+		
+		<li id="c_id910">				
+		    <a name="c910" href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#c910" title="Permalink to laurent&#39;s comment" class="count tooltip">5.</a>
+		    <p class="name">
+			<span>laurent</span> said:
+		    </p>
+		    <p class="date"><span>(</span> on  14th of August 2012 at 16:41 <span>)</span></p>
+		    <p class="comment"><span class="begin">“</span>like said Jon<br><br>Thanks, this is a nice, simple explanation of serving private files. Very helpful.<span class="end">”</span></p>
+
+		</li>
+		
+		
+		
+		<li id="c_id3033">				
+		    <a name="c3033" href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#c3033" title="Permalink to ricardo&#39;s comment" class="count tooltip">6.</a>
+		    <p class="name">
+			<span>ricardo</span> said:
+		    </p>
+		    <p class="date"><span>(</span> on  17th of April 2013 at 16:07 <span>)</span></p>
+		    <p class="comment"><span class="begin">“</span>Thanks a lot. This post was very helpful for me. It works nice !<span class="end">”</span></p>
+
+		</li>
+		
+		
+		
+		<li id="c_id10619">				
+		    <a name="c10619" href="http://nemesisdesign.net/blog/coding/django-private-file-upload-and-serving/#c10619" title="Permalink to Stephanie&#39;s comment" class="count tooltip">7.</a>
+		    <p class="name">
+			<span>Stephanie</span> said:
+		    </p>
+		    <p class="date"><span>(</span> on  6th of April 2015 at 23:11 <span>)</span></p>
+		    <p class="comment"><span class="begin">“</span>I've designated the new location to where the file should be uploaded and that works great!<br>But, in my template, when I try to display the image, it doesn't work? I had originally been using <br>src="{{STATIC_URL}}upload/{{ dataset.dataset_image }}"<br><br>but, now that I changed the location, I just hard coded the location in the template for now. Why doesn't the uploaded image display??<br>src="/Users/me/projects/uploadimages/{{ dataset.dataset_image }}"<span class="end">”</span></p>
+
+		</li>
+		
+		
+		</ol>		
+	    </div>
+	</div>
+	
+	
+	<div id="commentformcontainer">
+	    
+	    <h3 class="functional"><span>Leave your comment</span></h3>
+	    <div class="content" id="commentform">
+		<div class="inner">
+            <noscript>Posting comments requires Javascript to be enabled.</noscript>
+		    <div id="form2replace">
+
+<form action="http://nemesisdesign.net/comments/post/" method="post">
+  
+  
+    
+      <div><input type="hidden" name="content_type" value="blog.post" id="id_content_type"></div>
+    
+  
+    
+      <div><input type="hidden" name="object_pk" value="17" id="id_object_pk"></div>
+    
+  
+    
+      <div><input type="hidden" name="timestamp" value="1531968130" id="id_timestamp"></div>
+    
+  
+    
+      <div><input type="hidden" name="security_hash" value="2866e95d93fd6af0445ffadeac0ac0405569a627" id="id_security_hash"></div>
+    
+  
+    
+      
+      <p>
+        <label for="id_name">Name</label> <input id="id_name" type="text" name="name" maxlength="50">
+      </p>
+    
+  
+    
+      
+      <p>
+        <label for="id_email">Email address</label> <input type="text" name="email" id="id_email">
+      </p>
+    
+  
+    
+      
+      <p>
+        <label for="id_url">URL</label> <input type="text" name="url" id="id_url">
+      </p>
+    
+  
+    
+      
+      <p>
+        <label for="id_comment">Comment</label> <textarea id="id_comment" rows="10" cols="40" name="comment"></textarea>
+      </p>
+    
+  
+    
+      
+      <p style="display:none;">
+        <label for="id_honeypot">If you enter anything in this field your comment will be treated as spam</label> <input type="text" name="honeypot" id="id_honeypot">
+      </p>
+    
+  
+  <p class="submit">
+    <input type="submit" name="post" class="submit-post" value="Post">
+    <input type="submit" name="preview" class="submit-preview" value="Preview">
+  </p>
+</form>
+</div>		
+		</div>
+	    </div>
+	    
+	</div>
+    </div>
+  
+    <div class="controls robots-nocontent">
+        
+        <a class="left tooltip" href="http://nemesisdesign.net/blog/accessibility/nice-css-skip-links-appearing-focus/" title="Nice Skip Links Appearing on :focus with CSS">« More recent post</a>
+        
+        
+        <a class="right tooltip" href="http://nemesisdesign.net/blog/coding/django-filefield-content-type-size-validation/" title="Django: FileField with ContentType and File Size Validation">Older post »</a>
+        
+    </div>
+
+                
+                </div>
+                
+                <div id="side">
+
+                    <form action="http://nemesisdesign.net/blog/search/" method="get" id="search">
+                        <p class="textinput">
+                            <label for="id_q" class="accessibility"><a name="search-anchor">Search Term:</a></label>
+                            <input name="q" id="id_q" type="text" value="search for...">
+                        </p>
+                        <p class="button">
+                            <button type="submit">Search</button>
+                        </p>
+                    </form>
+                
+                    <h2><span>Categories</span></h2>
+                    <ul class="categories left">
+                        <li><a href="http://nemesisdesign.net/blog/thoughts">Thoughts</a></li>
+                        <li><a href="http://nemesisdesign.net/blog/coding">Coding</a></li>
+                        <li><a href="http://nemesisdesign.net/blog/accessibility">Accessibility</a></li>
+                    </ul>
+                    <ul class="categories right">
+                        <li><a href="http://nemesisdesign.net/blog/inspiration">Inspiration</a></li>
+                        <li><a href="http://nemesisdesign.net/blog/design">Design</a></li>
+                        <li><a href="http://nemesisdesign.net/blog/photography">Photography</a></li>
+                    </ul>
+                    
+                    <h2><span>Let's be social</span></h2>
+                    <ul class="social">
+                        <li><a class="myRSS tooltip" href="http://nemesisdesign.net/blog/feed/" title="Subscribe to my RSS feed"><b>&nbsp;</b><span>RSS</span></a></li>
+                        <li><a class="mytwitter tooltip" href="http://twitter.com/nemesisdesign/" title="Follow me on Twitter" target="_blank"><b>&nbsp;</b><span>twitter</span></a></li>
+                        <li><a class="myfacebook tooltip" href="http://www.facebook.com/federico.capoano" title="Let&#39;s catch up on Facebook" target="_blank"><b>&nbsp;</b><span>facebook</span></a></li>
+                        <li><a class="myflickr tooltip" href="http://www.flickr.com/people/26515834@N08/" title="Check my photostream on Flickr" target="_blank"><b>&nbsp;</b><span>flickr</span></a></li>
+                        <li><a class="mysu tooltip" href="http://www.stumbleupon.com/stumbler/nemesisdesign/" title="Stumble with me" target="_blank"><b>&nbsp;</b><span>SU</span></a></li>
+                    </ul>
+                    
+                    <h2><span>Popular posts</span></h2>
+                    <ol id="popular" class="contentlist">
+                        
+                        <li><a href="http://nemesisdesign.net/blog/coding/django-tagging-autocomplete-tag-it-jquery-ui/">Django Tagging Autocomplete Tag-It</a></li>
+                        
+                        <li><a href="http://nemesisdesign.net/blog/coding/django-filefield-content-type-size-validation/">Django: FileField with ContentType and File Size Validation</a></li>
+                        
+                        <li><a href="http://nemesisdesign.net/blog/design/business-card-design-print-tips/">10 Effective Business Card Design Tips</a></li>
+                        
+                        <li><a href="http://nemesisdesign.net/blog/coding/setup-django-staticgenerator-apache-mod_wsgi/">How to setup StaticGenerator with Apache + mod_wsgi</a></li>
+                        
+                        <li><a href="http://nemesisdesign.net/blog/coding/ie8-1x1px-semi-transparent-background-bug/">IE8 doesn't like 1x1px semi-transparent backgrounds</a></li>
+                        
+                    </ol>
+                    
+                    <h2><span>Latest Comments</span></h2>
+                    
+                    <ol id="latestcomments" class="contentlist">
+                    
+                        <li><blockquote><span>“</span> This is really an amazing article. Your article is really good and your article has always a good content with a good powerful point with informative information. Please don't stop you powerful content writing keeps it up. <span>”</span></blockquote><p>By <span>Sahil Arora</span> in <a href="http://nemesisdesign.net/blog/coding/how-get-comments-working-django-staticgenerator/#c99136">How to get comments working with Django StaticGenerator</a></p></li>
+                    
+                        <li><blockquote><span>“</span> I got very good results with this, thanks for sharing. <span>”</span></blockquote><p>By <span>Yasir Atabani</span> in <a href="http://nemesisdesign.net/blog/coding/how-to-speed-up-tests-django-postgresql/#c98306">How to speed up tests with Django and PostgreSQL</a></p></li>
+                    
+                        <li><blockquote><span>“</span> Hi Amad,
+
+for any question regarding OpenWISP, use one of the support channels:
+http://openwisp.org/support.html <span>”</span></blockquote><p>By <span>Federico Capoano</span> in <a href="http://nemesisdesign.net/blog/coding/how-to-install-openwisp/#c93343">How to install OpenWISP</a></p></li>
+                    
+                        <li><blockquote><span>“</span> Sir please guid , i have install the ansible-openwisp2 , now how to add the access points . What is the next procedure . Please help. <span>”</span></blockquote><p>By <span>Ahmad</span> in <a href="http://nemesisdesign.net/blog/coding/how-to-install-openwisp/#c93216">How to install OpenWISP</a></p></li>
+                    
+                        <li><blockquote><span>“</span> Hi Ronak,
+
+for any question regarding OpenWISP, use one of the support channels:
+http://openwisp.org/support.html <span>”</span></blockquote><p>By <span>Federico Capoano</span> in <a href="http://nemesisdesign.net/blog/coding/netjsonconfig-convert-netjson-to-openwrt-uci/#c92853">netjsonconfig: convert NetJSON to OpenWRT UCI</a></p></li>
+                    
+                    </ol>
+                    
+                    <h2><span>Popular Tags</span></h2>
+                    <p id="populartags" class="contentlist">
+                    
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/battlemesh" class="size2">battlemesh</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/censorship" class="size2">censorship</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/creativity" class="size2">creativity</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/criptography" class="size2">criptography</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/django" class="size8">django</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/event" class="size2">event</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/fosdem" class="size2">fosdem</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/google-summer-of-code" class="size5">google-summer-of-code</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/ibiza" class="size3">ibiza</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/inspiration" class="size4">inspiration</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/javascript" class="size2">javascript</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/jquery" class="size2">jquery</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/linux" class="size4">linux</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/nemesisdesign" class="size2">nemesisdesign</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/netjson" class="size4">netjson</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/ninux" class="size8">ninux</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/nodeshot" class="size4">nodeshot</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/open-source" class="size9">open-source</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/openwisp" class="size7">openwisp</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/openwrt" class="size4">openwrt</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/performance" class="size2">performance</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/photo" class="size5">photo</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/programming" class="size6">programming</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/python" class="size8">python</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/security" class="size6">security</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/staticgenerator" class="size2">staticgenerator</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/talk" class="size4">talk</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/upload" class="size2">upload</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/wifi" class="size2">wifi</a>
+                    
+                    <a href="http://nemesisdesign.net/blog/tags/wireless-community" class="size9">wireless-community</a>
+                    
+                    </p>
+                </div>
+                
+                
+            
+            </div>
+
+            <div id="foot">
+                <div class="inner">
+                    <ul>
+                        <li><a href="http://nemesisdesign.net/" rel="nofollow">home</a></li>
+                        <li><a href="http://nemesisdesign.net/about/" rel="nofollow">about</a></li>
+                        <li><a href="http://nemesisdesign.net/blog/" rel="nofollow">blog</a></li>
+                        <li><a href="http://nemesisdesign.net/portfolio/">portfolio</a></li>
+                        <li><a href="http://nemesisdesign.net/contact/" rel="nofollow">contact</a></li>
+                        <li><a href="http://feeds.feedburner.com/nemesisdesign?format=xml">RSS</a></li>
+                        <li><a href="http://nemesisdesign.net/friends/">friends</a></li>
+                        <li><a href="http://www.facebook.com/federico.capoano" rel="nofollow" target="_blank">facebook</a></li>
+                        <li><a href="http://twitter.com/nemesisdesign" rel="nofollow" target="_blank">twitter</a></li>
+                    </ul>
+                    <div class="contrast2">
+                        <p>The content provided in this site is copyright of Federico Capoano.
+    God gave you a Brain, use it. Don’t copy.</p>
+                        <p class="alignright"><a href="http://nemesisdesign.net/credits/" class="tooltip" title="Thanks to..">credits</a></p>
+                    </div>
+                    <a href="http://www.python.org/" title="This site is powered by python" class="python tooltip replace">Python<span>&nbsp;</span></a>
+                    <a href="http://www.djangoproject.org/" title="and Django" class="django tooltip replace">Django<span>&nbsp;</span></a>
+                </div>
+            </div>
+        </div>
+        
+        <script type="text/javascript" src="./apload tutorial_files/jquery.min.js"></script>
+        <script type="text/javascript" src="./apload tutorial_files/jquerytools.js"></script>
+        
+    <script type="text/javascript">var __comment_form_url__ = "/commentform/17/"</script>
+    <script src="./apload tutorial_files/blog.js" type="text/javascript"></script>
+    
+        <!--[if lte IE 6]><script type="text/javascript" src="http://static.nemesisdesign.net/template/js/ie6/warning.js"></script><![endif]-->
+        <script type="text/javascript">var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-13236059-1']);_gaq.push(['_setDomainName', 'nemesisdesign.net']);_gaq.push(['_trackPageview']);(function(){var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>
+    
+
+<style type="text/css">a.vert { display: block; text-align: center; font-size: 16px; float: left; margin: 4px; }a.retweet strong.vert { display: block; margin-bottom: 4px; background: #F5F5F5; border: 1px solid #EEE; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; padding: 3px; }a.retweet span.vert { display: block; font-size: 12px; margin-left: 0px; }</style><script language="javascript" type="text/javascript" src="./apload tutorial_files/shorten"></script><script language="javascript" type="text/javascript" src="./apload tutorial_files/clicks"></script></body></html>

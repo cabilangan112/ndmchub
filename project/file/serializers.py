@@ -18,6 +18,7 @@ class FileSerializer(serializers.ModelSerializer):
         fields = (
             'repository_name',
             'File_name',
+            'file',
             'description',
             'date',
             'date_modified',
